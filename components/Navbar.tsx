@@ -14,15 +14,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const supabase = createClient()
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -34,8 +26,7 @@ export default function Navbar() {
 
   const switchLocale = () => {
     const next = locale === 'ar' ? 'he' : 'ar'
-    const newPath = pathname.replace(`/${locale}`, `/${next}`)
-    router.push(newPath)
+    router.push(pathname.replace(`/${locale}`, `/${next}`))
   }
 
   const handleLogout = async () => {
@@ -45,31 +36,29 @@ export default function Navbar() {
     router.refresh()
   }
 
-  const langBtn = (
-    <button onClick={switchLocale} style={{
-      background: 'var(--gray-100)', border: '1px solid var(--gray-200)',
-      borderRadius: 'var(--radius-md)', padding: '7px 12px',
-      fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', cursor: 'pointer',
-    }}>
-      {locale === 'ar' ? 'עב' : 'ع'}
-    </button>
-  )
-
   return (
-    <nav className="navbar" style={{ position: 'relative' }}>
-      <div className="container" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <>
+      <style>{`
+        .dirti-nav-desktop { display: flex !important; }
+        .dirti-nav-mobile { display: none !important; }
+        @media (max-width: 768px) {
+          .dirti-nav-desktop { display: none !important; }
+          .dirti-nav-mobile { display: flex !important; }
+        }
+      `}</style>
 
-        {/* Logo */}
-        <Link href={`/${locale}`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 34, height: 34, background: 'var(--navy)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>د</span>
-          </div>
-          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)' }}>ديرتي</span>
-        </Link>
+      <nav className="navbar" style={{ position: 'relative' }}>
+        <div className="container" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
-        {/* Desktop nav */}
-        {!isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href={`/${locale}`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <div style={{ width: 34, height: 34, background: 'var(--navy)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>د</span>
+            </div>
+            <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)' }}>ديرتي</span>
+          </Link>
+
+          {/* Desktop */}
+          <div className="dirti-nav-desktop" style={{ alignItems: 'center', gap: 8 }}>
             <Link href={`/${locale}/listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>{t('listings')}</Link>
             {user ? (
               <>
@@ -83,50 +72,43 @@ export default function Navbar() {
                 <Link href={`/${locale}/register`} className="btn btn-primary" style={{ padding: '8px 16px', fontSize: 14 }}>{t('register')}</Link>
               </>
             )}
-            {langBtn}
+            <button onClick={switchLocale} style={{ background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '7px 12px', fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', cursor: 'pointer' }}>
+              {locale === 'ar' ? 'עב' : 'ع'}
+            </button>
           </div>
-        )}
 
-        {/* Mobile */}
-        {isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {langBtn}
-            <button onClick={() => setMenuOpen(!menuOpen)} style={{
-              background: 'none', border: '1px solid var(--gray-200)',
-              borderRadius: 'var(--radius-md)', padding: '7px 10px',
-              cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 4,
-            }}>
+          {/* Mobile */}
+          <div className="dirti-nav-mobile" style={{ alignItems: 'center', gap: 8 }}>
+            <button onClick={switchLocale} style={{ background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '6px 10px', fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', cursor: 'pointer' }}>
+              {locale === 'ar' ? 'עב' : 'ع'}
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '7px 10px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 4 }}>
               <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
               <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
               <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
             </button>
           </div>
-        )}
-      </div>
-
-      {/* Mobile dropdown */}
-      {isMobile && menuOpen && (
-        <div style={{
-          position: 'absolute', top: '100%', left: 0, right: 0,
-          background: 'var(--white)', borderBottom: '1px solid var(--gray-100)',
-          boxShadow: 'var(--shadow-md)', zIndex: 200,
-          display: 'flex', flexDirection: 'column', padding: '12px 16px', gap: 8,
-        }}>
-          <Link href={`/${locale}/listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('listings')}</Link>
-          {user ? (
-            <>
-              <Link href={`/${locale}/add-listing`} className="btn btn-blue" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('add_listing')}</Link>
-              <Link href={`/${locale}/my-listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('my_listings')}</Link>
-              <button onClick={handleLogout} className="btn btn-outline">{t('logout')}</button>
-            </>
-          ) : (
-            <>
-              <Link href={`/${locale}/login`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('login')}</Link>
-              <Link href={`/${locale}/register`} className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('register')}</Link>
-            </>
-          )}
         </div>
-      )}
-    </nav>
+
+        {/* Mobile dropdown */}
+        {menuOpen && (
+          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--white)', borderBottom: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-md)', zIndex: 200, display: 'flex', flexDirection: 'column', padding: '12px 16px', gap: 8 }}>
+            <Link href={`/${locale}/listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('listings')}</Link>
+            {user ? (
+              <>
+                <Link href={`/${locale}/add-listing`} className="btn btn-blue" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('add_listing')}</Link>
+                <Link href={`/${locale}/my-listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('my_listings')}</Link>
+                <button onClick={handleLogout} className="btn btn-outline">{t('logout')}</button>
+              </>
+            ) : (
+              <>
+                <Link href={`/${locale}/login`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('login')}</Link>
+                <Link href={`/${locale}/register`} className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('register')}</Link>
+              </>
+            )}
+          </div>
+        )}
+      </nav>
+    </>
   )
 }
