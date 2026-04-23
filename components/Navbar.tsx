@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations, useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -38,77 +38,53 @@ export default function Navbar() {
 
   return (
     <>
-      <style>{`
-        .dirti-nav-desktop { display: flex !important; }
-        .dirti-nav-mobile { display: none !important; }
-        @media (max-width: 768px) {
-          .dirti-nav-desktop { display: none !important; }
-          .dirti-nav-mobile { display: flex !important; }
-        }
-      `}</style>
-
-      <nav className="navbar" style={{ position: 'relative' }}>
+      <nav className="navbar">
         <div className="container" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-
-          <Link href={`/${locale}`} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <div style={{ width: 34, height: 34, background: 'var(--navy)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: '#fff', fontSize: 15, fontWeight: 700 }}>د</span>
-            </div>
-            <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--navy)' }}>ديرتي</span>
+          
+          <Link href={`/${locale}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 24, fontWeight: 900, color: '#0EA5E9', fontFamily: 'Cairo, sans-serif', letterSpacing: '-0.5px' }}>ديرتي</span>
           </Link>
 
-          {/* Desktop */}
-          <div className="dirti-nav-desktop" style={{ alignItems: 'center', gap: 8 }}>
-            <Link href={`/${locale}/listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>{t('listings')}</Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             {user ? (
               <>
-                <Link href={`/${locale}/add-listing`} className="btn btn-blue" style={{ padding: '8px 16px', fontSize: 14 }}>{t('add_listing')}</Link>
-                <Link href={`/${locale}/my-listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>{t('my_listings')}</Link>
-                <button onClick={handleLogout} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>{t('logout')}</button>
+                <Link href={`/${locale}/add-listing`} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
+                  {t('add_listing')}
+                </Link>
+                <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: '1.5px solid var(--gray-200)', borderRadius: '50%', width: 38, height: 38, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="16" height="16" fill="none" stroke="var(--gray-700)" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </button>
               </>
             ) : (
               <>
-                <Link href={`/${locale}/login`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>{t('login')}</Link>
-                <Link href={`/${locale}/register`} className="btn btn-primary" style={{ padding: '8px 16px', fontSize: 14 }}>{t('register')}</Link>
+                <Link href={`/${locale}/login`} className="btn btn-ghost" style={{ padding: '8px 14px', fontSize: 13 }}>
+                  {t('login')}
+                </Link>
+                <Link href={`/${locale}/register`} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: 13 }}>
+                  {t('register')}
+                </Link>
               </>
             )}
-            <button onClick={switchLocale} style={{ background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '7px 12px', fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', cursor: 'pointer' }}>
-              {locale === 'ar' ? 'עב' : 'ع'}
-            </button>
-          </div>
-
-          {/* Mobile */}
-          <div className="dirti-nav-mobile" style={{ alignItems: 'center', gap: 8 }}>
-            <button onClick={switchLocale} style={{ background: 'var(--gray-100)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '6px 10px', fontSize: 13, fontWeight: 500, color: 'var(--gray-700)', cursor: 'pointer' }}>
-              {locale === 'ar' ? 'עב' : 'ع'}
-            </button>
-            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'none', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)', padding: '7px 10px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
-              <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
-              <span style={{ width: 18, height: 2, background: 'var(--navy)', display: 'block', borderRadius: 2 }} />
+            <button onClick={switchLocale} style={{ background: 'var(--gray-100)', border: '1.5px solid var(--gray-200)', borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Cairo, sans-serif' }}>
+              {locale === 'ar' ? 'ע' : 'ع'}
             </button>
           </div>
         </div>
-
-        {/* Mobile dropdown */}
-        {menuOpen && (
-          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--white)', borderBottom: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-md)', zIndex: 200, display: 'flex', flexDirection: 'column', padding: '12px 16px', gap: 8 }}>
-            <Link href={`/${locale}/listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('listings')}</Link>
-            {user ? (
-              <>
-                <Link href={`/${locale}/add-listing`} className="btn btn-blue" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('add_listing')}</Link>
-                <Link href={`/${locale}/my-listings`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('my_listings')}</Link>
-                <button onClick={handleLogout} className="btn btn-outline">{t('logout')}</button>
-              </>
-            ) : (
-              <>
-                <Link href={`/${locale}/login`} className="btn btn-outline" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('login')}</Link>
-                <Link href={`/${locale}/register`} className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ justifyContent: 'center' }}>{t('register')}</Link>
-              </>
-            )}
-          </div>
-        )}
       </nav>
+
+      {menuOpen && user && (
+        <div style={{ position: 'fixed', top: 64, insetInlineEnd: 16, background: 'white', border: '1px solid var(--gray-100)', borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', zIndex: 200, minWidth: 180, overflow: 'hidden' }}>
+          <Link href={`/${locale}/my-listings`} onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 18px', fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', borderBottom: '1px solid var(--gray-100)' }}>
+            {t('my_listings')}
+          </Link>
+          <button onClick={handleLogout} style={{ display: 'block', width: '100%', padding: '14px 18px', fontSize: 14, fontWeight: 600, color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'inherit', fontFamily: 'Cairo, sans-serif' }}>
+            {t('logout')}
+          </button>
+        </div>
+      )}
+      {menuOpen && <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 199 }} />}
     </>
   )
 }

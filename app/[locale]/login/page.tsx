@@ -1,13 +1,11 @@
 'use client'
-
 import { useState } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function LoginPage() {
-  const t = useTranslations('auth')
   const locale = useLocale()
   const router = useRouter()
   const supabase = createClient()
@@ -21,51 +19,43 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError(locale === 'ar' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 'אימייל או סיסמה שגויים')
-    } else {
-      router.push(`/${locale}`)
-      router.refresh()
-    }
+    if (error) setError(locale === 'ar' ? 'البريد أو كلمة المرور غير صحيحة' : 'אימייל או סיסמה שגויים')
+    else { router.push(`/${locale}`); router.refresh() }
     setLoading(false)
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: 'var(--off-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+    <div className="auth-wrapper">
       <div className="auth-card">
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <Link href={`/${locale}`}>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: 'var(--navy)', fontWeight: 600 }}>ديرتي</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: '#0EA5E9', fontFamily: 'Cairo, sans-serif' }}>ديرتي</span>
           </Link>
-          <h1 style={{ fontFamily: 'var(--font-body)', fontSize: 20, fontWeight: 600, marginTop: 20, color: 'var(--gray-800)' }}>
-            {t('login_title')}
-          </h1>
+          <p style={{ fontSize: 18, fontWeight: 700, marginTop: 16, color: 'var(--gray-900)' }}>
+            {locale === 'ar' ? 'تسجيل الدخول' : 'כניסה'}
+          </p>
         </div>
-
-        <form onSubmit={handleLogin} style={{ display: 'grid', gap: 16 }}>
+        <form onSubmit={handleLogin} style={{ display: 'grid', gap: 14 }}>
           <div className="form-group">
-            <label>{t('email')}</label>
+            <label>{locale === 'ar' ? 'البريد الإلكتروني' : 'אימייל'}</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
           </div>
           <div className="form-group">
-            <label>{t('password')}</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" minLength={8} />
+            <label>{locale === 'ar' ? 'كلمة المرور' : 'סיסמה'}</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} autoComplete="current-password" />
           </div>
-
           {error && <p className="error-msg">{error}</p>}
-
           <button type="submit" className="btn btn-primary" disabled={loading} style={{ padding: '13px', fontSize: 15, marginTop: 4 }}>
-            {loading ? '...' : t('login_btn')}
+            {loading ? '...' : (locale === 'ar' ? 'دخول' : 'כניסה')}
           </button>
         </form>
-
-        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--gray-500)' }}>
-          {t('no_account')}{' '}
-          <Link href={`/${locale}/register`} style={{ color: 'var(--blue-600)', fontWeight: 500 }}>
-            {t('register')}
+        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: 'var(--gray-500)' }}>
+          {locale === 'ar' ? 'ليس لديك حساب؟' : 'אין לך חשבון?'}{' '}
+          <Link href={`/${locale}/register`} style={{ color: '#0EA5E9', fontWeight: 600 }}>
+            {locale === 'ar' ? 'إنشاء حساب' : 'הרשמה'}
           </Link>
         </p>
       </div>
-    </main>
+    </div>
   )
 }
