@@ -152,16 +152,6 @@ export default function Navbar() {
         </div>
       )}
 
-      <style>{`
-        @media (max-width: 768px) {
-          .nav-desktop { display: none !important; }
-          .nav-mobile { display: flex !important; }
-        }
-        @media (min-width: 769px) {
-          .nav-desktop { display: flex !important; }
-          .nav-mobile { display: none !important; }
-        }
-      `}</style>
     </nav>
   )
 }

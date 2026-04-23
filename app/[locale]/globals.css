@@ -402,3 +402,13 @@ textarea {
 .status-active { background: #dcfce7; color: #166534; }
 .status-rejected { background: #fee2e2; color: #991b1b; }
 .status-expired { background: var(--gray-100); color: var(--gray-600); }
+
+/* Mobile navbar */
+@media (min-width: 769px) {
+  .nav-mobile { display: none !important; }
+  .nav-desktop { display: flex !important; }
+}
+@media (max-width: 768px) {
+  .nav-desktop { display: none !important; }
+  .nav-mobile { display: flex !important; }
+}
