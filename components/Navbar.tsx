@@ -1,0 +1,115 @@
+'use client'
+
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
+import type { User } from '@supabase/supabase-js'
+
+export default function Navbar() {
+  const t = useTranslations('nav')
+  const locale = useLocale()
+  const router = useRouter()
+  const pathname = usePathname()
+  const [user, setUser] = useState<User | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const supabase = createClient()
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const switchLocale = () => {
+    const next = locale === 'ar' ? 'he' : 'ar'
+    const newPath = pathname.replace(`/${locale}`, `/${next}`)
+    router.push(newPath)
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push(`/${locale}`)
+    router.refresh()
+  }
+
+  return (
+    <nav className="navbar">
+      <div className="container" style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        
+        {/* Logo */}
+        <Link href={`/${locale}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+          <div style={{
+            width: 36, height: 36,
+            background: 'var(--navy)',
+            borderRadius: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ color: '#fff', fontSize: 16, fontFamily: 'var(--font-display)', fontWeight: 600 }}>د</span>
+          </div>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 22,
+            fontWeight: 600,
+            color: 'var(--navy)',
+            letterSpacing: '-0.01em',
+          }}>
+            ديرتي
+          </span>
+        </Link>
+
+        {/* Desktop nav */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href={`/${locale}/listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>
+            {t('listings')}
+          </Link>
+
+          {user ? (
+            <>
+              <Link href={`/${locale}/add-listing`} className="btn btn-blue" style={{ padding: '8px 16px', fontSize: 14 }}>
+                {t('add_listing')}
+              </Link>
+              <Link href={`/${locale}/my-listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>
+                {t('my_listings')}
+              </Link>
+              <button onClick={handleLogout} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>
+                {t('logout')}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href={`/${locale}/login`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>
+                {t('login')}
+              </Link>
+              <Link href={`/${locale}/register`} className="btn btn-primary" style={{ padding: '8px 16px', fontSize: 14 }}>
+                {t('register')}
+              </Link>
+            </>
+          )}
+
+          {/* Language switcher */}
+          <button
+            onClick={switchLocale}
+            style={{
+              background: 'var(--gray-100)',
+              border: '1px solid var(--gray-200)',
+              borderRadius: 'var(--radius-md)',
+              padding: '7px 12px',
+              fontSize: 13,
+              fontWeight: 500,
+              color: 'var(--gray-700)',
+              cursor: 'pointer',
+              transition: 'all 0.15s',
+              marginInlineStart: 4,
+            }}
+          >
+            {locale === 'ar' ? 'עברית' : 'العربية'}
+          </button>
+        </div>
+      </div>
+    </nav>
+  )
+}
