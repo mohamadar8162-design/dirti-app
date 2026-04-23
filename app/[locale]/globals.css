@@ -24,8 +24,8 @@
   --gray-900: #111827;
 
   /* Typography */
-  --font-display: 'DM Sans', 'Tajawal', sans-serif;
-  --font-body: 'Tajawal', 'DM Sans', sans-serif;
+  --font-display: 'Cairo', sans-serif;
+  --font-body: 'Cairo', sans-serif;
 
   /* Spacing */
   --nav-height: 72px;
@@ -55,6 +55,7 @@ html {
 body {
   font-family: var(--font-body);
   font-size: 16px;
+  font-weight: 400;
   line-height: 1.6;
   color: var(--gray-800);
   background: var(--white);

@@ -57,7 +57,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="nav-desktop">
           <Link href={`/${locale}/listings`} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: 14 }}>
             {t('listings')}
           </Link>
@@ -153,11 +153,13 @@ export default function Navbar() {
       )}
 
       <style>{`
-        .nav-desktop { display: flex; }
-        .nav-mobile { display: none; }
         @media (max-width: 768px) {
           .nav-desktop { display: none !important; }
           .nav-mobile { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .nav-desktop { display: flex !important; }
+          .nav-mobile { display: none !important; }
         }
       `}</style>
     </nav>
