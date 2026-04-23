@@ -77,7 +77,7 @@ export default async function HomePage({
               maxWidth: 780,
               margin: '0 auto',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
               gap: 12,
               boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
             }}>

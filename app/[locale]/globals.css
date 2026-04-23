@@ -24,8 +24,8 @@
   --gray-900: #111827;
 
   /* Typography */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Tajawal', 'Segoe UI', sans-serif;
+  --font-display: 'DM Sans', 'Tajawal', sans-serif;
+  --font-body: 'Tajawal', 'DM Sans', sans-serif;
 
   /* Spacing */
   --nav-height: 72px;
@@ -73,8 +73,8 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: var(--font-body);
+  font-weight: 600;
   line-height: 1.25;
   color: var(--navy);
 }
